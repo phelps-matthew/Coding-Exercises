@@ -1,0 +1,7 @@
+/__pycache__/*
+/gitstar/__pycache__/*
+/gitstar/ETL/__pycache__/*
+/gitstar/models/__pycache__/*
+devvenv/*
+tree.sh
+*.egg*/
