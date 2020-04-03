@@ -1,7 +1,14 @@
+"""
+Compute mean, std, and ccdf from coin bag game.
+
+Note:
+    Could not speed up computation by factor of 10^7 necessary to compute 20!
+    permutations. Closed form analytical solution for mean and std (at
+    arbitrary N) is possible, but not given here.
+"""
 from itertools import permutations
-import numpy as np
-from scipy.special import factorial
 from math import sqrt
+from scipy.special import factorial
 
 
 def payment(a):
@@ -22,60 +29,41 @@ def payment(a):
     return total
 
 
-def mean_std(N, x):
+def get_stats(N, x=100):
     """
-    Mean from all permutations
+    Mean, std, and ccdf over all permutations
 
     Parameters
     ----------
     N : int
         Number of coins
+    x : int, default 100
+        Ccdf argument
 
     Returns
     -------
-    mean : float
+    mean, std, ccdf : float
     """
     perm = permutations(range(1, N + 1))
-    cuml, cuml_square, idx = 0, 0, 0
+    cuml, cuml_square, idx = (0, 0, 0)
     while True:
         try:
             draw = payment(next(perm))
             cuml += draw
             cuml_square += draw ** 2
+            # Count draws that exceed x
             if draw >= x:
                 idx += 1
         except StopIteration:
             mean = cuml / factorial(N)
             var = cuml_square / factorial(N) - mean ** 2
             std = sqrt(var)
-            cuml_x = idx/factorial(N)
-            print("N: {}, mean {}:, std {}:, cuml_x {}:".format(N, mean, std, cuml_x))
-            return mean, std, cuml_x
-
-def cdf(N):
-    """
-    Mean from all permutations
-
-    Parameters
-    ----------
-    N : int
-        Number of coins
-
-    Returns
-    -------
-    mean : float
-    """
+            ccdf = idx / factorial(N)
+            return mean, std, ccdf
 
 
 if __name__ == "__main__":
-    import timeit
-    num = 1
-    N = 3
-    x = 5
-    tstr = "mean_std({}, {})".format(N, x)
-    time = timeit.timeit(
-        tstr, setup="from __main__ import mean_std", number=num
-    )
-    avg = time/num
-    print(avg)
-    print("{:e}".format(avg/factorial(N)*factorial(20)))
+    N = 10
+    x = 45
+    mean, std, ccdf = get_stats(N, x)
+    print("N:{}, mean:{}, std:{}, ccdf({}):{}".format(N, mean, std, x, ccdf))
