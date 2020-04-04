@@ -5,3 +5,4 @@
 devvenv/*
 tree.sh
 *.egg*/
+/TDI/*
