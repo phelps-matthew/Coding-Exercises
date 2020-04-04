@@ -6,3 +6,4 @@ devvenv/*
 tree.sh
 *.egg*/
 /TDI/*
+/TDI/data/*
