@@ -1,5 +1,7 @@
 /ml/geron/jup_env/*
 /ml/geron/.ipynb_checkpoints/*
+ml/geron/jup_env/*
+ml/geron/.ipynb_checkpoints/*
 /__pycache__/*
 /gitstar/__pycache__/*
 /gitstar/ETL/__pycache__/*
