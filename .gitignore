@@ -1,4 +1,5 @@
+# if gitignore updated after files have been committed, use 'git rm -r --cached .'
 /ml/geron/jup_env/*
 /ml/geron/.ipynb_checkpoints/*
-ml/geron/jup_env/*
-ml/geron/.ipynb_checkpoints/*
+/ml_env/*
+/coding_git.sh
