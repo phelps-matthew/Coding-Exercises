@@ -1,2 +1,2 @@
 # Coding-Exercises
-Notes, algorithms, and challenges (python)
+Notes, algorithms, challenges, and utility scripts (python)
