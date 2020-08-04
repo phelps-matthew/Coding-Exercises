@@ -5,28 +5,24 @@
 #         self.left = left
 #         self.right = right
 
-# Do an in order traversal, deleting any nodes beyond range
-# Now just need to shift root around
-# Can't do general deletion method as it requires parent
+# Tried doing an in order traversal, deleting any nodes beyond range, logic 
+# became too convoluted and non-functional
+# Can't do general BST deletion method as it requires parent
 class Solution:
     def trimBST(self, root: TreeNode, L: int, R: int) -> TreeNode:
-        for p in self.inorder(root):
-            if p.left and p.left.val < L:
-                p.left = p.left.right
-            if p.right and p.right.val > R:
-                p.right = p.right.left
+        if root is None:
+            return None
+        if root.val < L:
+            return self.trimBST(root.right, L, R)
+        elif root.val > R:
+            return self.trimBST(root.left, L, R)
+        root.left = self.trimBST(root.left, L, R)
+        root.right = self.trimBST(root.right, L, R)
         return root
     
-    def inorder(self, p):
-        """traverse subtree rooted at p"""
-        # traverse left subtree
-        if p.left:
-            # kind of behaves like a stack, the yields pass through the "nested" for loops
-            for x in self.inorder(p.left):
-                yield x
-        # Visit p (will be root)
-        yield p
-        # traverse right subtree
-        if p.right:
-            for x in self.inorder(p.right):
-                yield x     
+# above acts like a filter, recursively passing only values within the range
+# depth first, integrated with operations
+# note by conditionals that end of recursion stack only hits when None, or within [L,R]. In other
+# words, the only returns are None or [L, R]. These returns are used to reassign root.left and root.right for valid roots
+# Going top down, skips over bad roots (will not return them at least), however bad node connection to good child node still exists
+# Very difficult to have thought of implementing; more practice needed
