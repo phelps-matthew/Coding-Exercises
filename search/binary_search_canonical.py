@@ -43,7 +43,7 @@ def binary_search_2(arr, target):
 def binary_search_3(arr, target):
     """Iterative"""
     low = 0
-    high = len(arr)
+    high = len(arr) - 1
 
     while low <= high:
         mid = low + (high - low) // 2
