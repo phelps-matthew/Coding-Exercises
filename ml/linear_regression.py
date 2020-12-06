@@ -37,7 +37,7 @@ class LinearRegression1:
 
 
 class LinearRegression2:
-    """Pure python linear regression"""
+    """Pure python linear regression. Bit awkward to deal with tensors."""
 
     def __init__(self, lr=0.01, epochs=100):
         self.lr = lr
@@ -47,22 +47,6 @@ class LinearRegression2:
         """initialize weights uniformly in [-1/n, 1/n]"""
         limit = 1 / math.sqrt(n_features)
         self.w = [random.uniform(-limit, limit) for _ in range(n_features)]
-
-    def matmul(self, A, B):
-        print(A, B)
-        if isinstance(A[0], (int, float)):
-            A = [A]
-        if isinstance(B[0], (int, float)):
-            B = [B]
-        print(len(A[0]), len(B))
-        assert len(A[0]) == len(B)
-        m = len(A)
-        n = len(B[0])
-        res = [[] * n for i in range(m)]
-        for i in range(m):
-            for j in range(n):
-                res[i][j] = sum(A[i][k] * B[k][j] for k in range(A[0]))
-        return res
 
     def get_y_pred(self, X):
         return [
@@ -79,7 +63,7 @@ class LinearRegression2:
         n_features = len(X[0])
         self.initialize(n_features)
 
-        for i in range(self.epochs):
+        for _ in range(self.epochs):
             y_pred = self.get_y_pred(X)
             delta_y = [y[i] - y_pred[i] for i in range(len(y))]
             grad_w = [
@@ -89,9 +73,81 @@ class LinearRegression2:
             for i in range(len(self.w)):
                 self.w[i] = self.w[i] - self.lr * grad_w[i]
 
+    def fit2(self, X, y):
+        """More explicit looping"""
+        # add bias
+        X = [[1] + row for row in X]
+        n_features = len(X[0])
+        self.initialize(n_features)
+
+        for _ in range(self.epochs):
+            # form y_pred
+            y_pred = [0] * len(X)
+            for i in range(len(X)):
+                elem = 0
+                for j in range(len(X[0])):
+                    elem += X[i][j] * self.w[j]
+                y_pred[i] = elem
+
+            # form weight gradient
+            for i in range(len(X[0])):
+                elem = 0
+                for j in range(len(X)):
+                    elem += (y[j] - y_pred[j]) * X[j][i]
+                grad_loss = -2 / n_features * elem
+                self.w[i] = self.w[i] - self.lr * grad_loss
+
     def predict(self, X):
         X = [[1] + row for row in X]
-        return np.matmul(X, self.w)
+        return self.get_y_pred(X)
+
+
+class LinearRegression3:
+    """Pure python linear regression. Similar to `LinearRegression2`,
+    but with more explicit looping"""
+
+    def __init__(self, lr=0.01, epochs=100):
+        self.lr = lr
+        self.epochs = epochs
+
+    def initialize(self, n_features):
+        """initialize weights uniformly in [-1/n, 1/n]"""
+        limit = 1 / math.sqrt(n_features)
+        self.w = [random.uniform(-limit, limit) for _ in range(n_features)]
+
+    def fit(self, X, y):
+        """More explicit looping"""
+        # add bias
+        X = [[1] + row for row in X]
+        n_features = len(X[0])
+        self.initialize(n_features)
+
+        for _ in range(self.epochs):
+            # form y_pred
+            y_pred = [0] * len(X)
+            for i in range(len(X)):
+                elem = 0
+                for j in range(len(X[0])):
+                    elem += X[i][j] * self.w[j]
+                y_pred[i] = elem
+
+            # form weight gradient
+            for i in range(len(X[0])):
+                elem = 0
+                for j in range(len(X)):
+                    elem += (y[j] - y_pred[j]) * X[j][i]
+                grad_loss = -2 / n_features * elem
+                self.w[i] = self.w[i] - self.lr * grad_loss
+
+    def predict(self, X):
+        X = [[1] + row for row in X]
+        y_pred = [0] * len(X)
+        for i in range(len(X)):
+            elem = 0
+            for j in range(len(X[0])):
+                elem += X[i][j] * self.w[j]
+            y_pred[i] = elem
+        return y_pred
 
 
 def numpy_test():
@@ -107,9 +163,14 @@ def numpy_test():
 def python_test():
     X = [[1, 1], [1, 2], [2, 2], [2, 3]]
     y = [1 * a + 2 * b + 3 for a, b in X]
-    linreg = LinearRegression2()
-    linreg.fit(X, y)
-    y_pred = linreg.predict(X)
+    linreg2 = LinearRegression2()
+    linreg2.fit(X, y)
+    y_pred = linreg2.predict(X)
+    print(y)
+    print(y_pred)
+    linreg3 = LinearRegression3()
+    linreg3.fit(X, y)
+    y_pred = linreg3.predict(X)
     print(y)
     print(y_pred)
 
