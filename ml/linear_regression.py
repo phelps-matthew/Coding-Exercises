@@ -73,30 +73,6 @@ class LinearRegression2:
             for i in range(len(self.w)):
                 self.w[i] = self.w[i] - self.lr * grad_w[i]
 
-    def fit2(self, X, y):
-        """More explicit looping"""
-        # add bias
-        X = [[1] + row for row in X]
-        n_features = len(X[0])
-        self.initialize(n_features)
-
-        for _ in range(self.epochs):
-            # form y_pred
-            y_pred = [0] * len(X)
-            for i in range(len(X)):
-                elem = 0
-                for j in range(len(X[0])):
-                    elem += X[i][j] * self.w[j]
-                y_pred[i] = elem
-
-            # form weight gradient
-            for i in range(len(X[0])):
-                elem = 0
-                for j in range(len(X)):
-                    elem += (y[j] - y_pred[j]) * X[j][i]
-                grad_loss = -2 / n_features * elem
-                self.w[i] = self.w[i] - self.lr * grad_loss
-
     def predict(self, X):
         X = [[1] + row for row in X]
         return self.get_y_pred(X)
