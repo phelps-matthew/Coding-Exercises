@@ -11,7 +11,7 @@ class LinearRegression1:
         self.epochs = epochs
 
     def initialize(self, n_features):
-        """initialize weights uniformly in [-1/n, 1/n]"""
+        """initialize weights uniformly in [-1/sqrt(n), 1/sqrt(n)]"""
         limit = 1 / math.sqrt(n_features)
         self.w = np.random.uniform(-limit, limit, n_features)
 
@@ -19,13 +19,14 @@ class LinearRegression1:
         # add bias
         X = np.insert(X, 0, 1, axis=1)
         n_features = X.shape[1]
+        n_samples = X.shape[0]
         self.initialize(n_features)
         # mse = np.mean(np.square((y-y_pred)))
 
         if grad_descent:
             for i in range(self.epochs):
                 y_pred = np.matmul(X, self.w)
-                grad_w = -2 / n_features * np.matmul((y - y_pred), X)
+                grad_w = -2 / n_samples * np.matmul((y - y_pred), X)
                 self.w = self.w - self.lr * grad_w
         else:
             # Normal eq.
